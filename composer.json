@@ -1,0 +1,34 @@
+{
+    "name": "heimrichhannot/contao-search_plus",
+    "description":"Extend the contao core search, to achieve more features like pdf search.",
+    "keywords":["contao", "search", "pdf"],
+    "type": "contao-module",
+    "homepage":"https://github.com/heimrichhannot/contao-search_plus",
+    "license":"LGPL-3.0+",
+    "authors":[
+        {
+            "name":"Heimrich & Hannot",
+            "email":"digitales@heimrich-hannot.de",
+            "homepage":"http://www.heimrich-hannot.de",
+            "role":"Developer"
+        }
+    ],
+    "support":{
+        "issues":"https://github.com/heimrichhannot/contao-search_plus/issues"
+    },
+    "require": {
+        "contao/core": ">=3.2,<4-dev",
+        "contao-community-alliance/composer-installer": "*",
+        "smalot/pdfparser": ">=0.9,<1-dev"
+    },
+    "autoload": {
+        "classmap": [""]
+    },
+    "extra": {
+        "contao": {
+            "sources": {
+                "": "system/modules/search_plus"
+            }
+        }
+    }
+}
