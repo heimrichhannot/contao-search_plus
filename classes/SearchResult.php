@@ -16,6 +16,12 @@ class SearchResult
 {
 	protected $arrData = array();
 
+	/**
+	 * Primary key
+	 * @var string
+	 */
+	protected static $strPk = 'id';
+
 	public function __construct(array $arrResult)
 	{
 		$this->arrData = $arrResult;
@@ -105,5 +111,48 @@ class SearchResult
 	public function __isset($strKey)
 	{
 		return isset($this->arrData[$strKey]);
+	}
+
+
+	/**
+	 * Return the current item as associative array
+	 *
+	 * @return array The data record
+	 */
+	public function row()
+	{
+		return $this->arrData;
+	}
+
+
+	/**
+	 * Set the current record from an array
+	 *
+	 * @param array $arrData The data record
+	 *
+	 * @return \Model The SearchResult object
+	 */
+	public function setRow(array $arrData)
+	{
+		foreach ($arrData as $k=>$v)
+		{
+			if (strpos($k, '__') !== false)
+			{
+				unset($arrData[$k]);
+			}
+		}
+
+		$this->arrData = $arrData;
+		return $this;
+	}
+
+	/**
+	 * Return the name of the primary key
+	 *
+	 * @return string The primary key
+	 */
+	public static function getPk()
+	{
+		return static::$strPk;
 	}
 }

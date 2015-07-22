@@ -124,9 +124,9 @@ class ModuleSearchPlus extends \ModuleSearch
 			$query_endtime = microtime(true);
 
 			$objSearchResults = new SearchResultList(array_values($arrResult), $this->objModel);
-			$arrResult = $objSearchResults->generate();
+			$arrResult = $objSearchResults->getResults();
 
-			$count = count($arrResult);
+			$count = $objSearchResults->count();
 
 			$this->Template->count    = $count;
 			$this->Template->page     = null;
@@ -173,21 +173,25 @@ class ModuleSearchPlus extends \ModuleSearch
 				/** @var \FrontendTemplate|object $objTemplate */
 				$objTemplate = new \FrontendTemplate($this->searchTpl ?: 'search_default');
 
-				$objTemplate->url       = $arrResult[$i]->url;
-				$objTemplate->link      = $arrResult[$i]->title;
-				$objTemplate->href      = $arrResult[$i]->url;
-				$objTemplate->title     = specialchars($arrResult[$i]->title);
+				if(!$objSearchResults->offsetExists($i)) continue;
+
+				$objResult = $objSearchResults->offsetGet($i);
+
+				$objTemplate->url       = $objResult->url;
+				$objTemplate->link      = $objResult->title;
+				$objTemplate->href      = $objResult->url;
+				$objTemplate->title     = specialchars($objResult->title);
 				$objTemplate->class     = (($i == ($from - 1)) ? 'first ' : '') . (($i == ($to - 1) || $i == ($count - 1)) ? 'last ' : '') . (($i % 2
 																																			   == 0) ? 'even' : 'odd');
 				$objTemplate->relevance = sprintf(
 					$GLOBALS['TL_LANG']['MSC']['relevance'],
-					number_format($arrResult[$i]->relevance / $arrResult[0]->relevance * 100, 2) . '%'
+					number_format($objResult->relevance / $objResult->relevance * 100, 2) . '%'
 				);
-				$objTemplate->filesize  = $arrResult[$i]->filesize;
-				$objTemplate->matches   = $arrResult[$i]->matches;
+				$objTemplate->filesize  = $objResult->filesize;
+				$objTemplate->matches   = $objResult->matches;
 
 				$arrContext = array();
-				$arrMatches = trimsplit(',', $arrResult[$i]->matches);
+				$arrMatches = trimsplit(',', $objResult->matches);
 
 				// Get the context
 				foreach ($arrMatches as $strWord) {
@@ -195,7 +199,7 @@ class ModuleSearchPlus extends \ModuleSearch
 					preg_match_all(
 						'/(^|\b.{0,' . $this->contextLength . '}\PL)' . str_replace('+', '\\+', $strWord) . '(\PL.{0,' . $this->contextLength
 						. '}\b|$)/ui',
-						$arrResult[$i]->text,
+						$objResult->text,
 						$arrChunks
 					);
 
