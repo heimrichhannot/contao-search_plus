@@ -97,16 +97,16 @@ class ModuleSearchPlus extends \ModuleSearch
 			$query_starttime = microtime(true);
 			$strCacheFile    = 'system/cache/search/' . $strChecksum . '.json';
 
-			// Load the cached result
-//			if (file_exists(TL_ROOT . '/' . $strCacheFile)) {
-//				$objFile = new \File($strCacheFile, true);
-//
-//				if ($objFile->mtime > time() - 1800) {
-//					$arrResult = json_decode($objFile->getContent(), true);
-//				} else {
-//					$objFile->delete();
-//				}
-//			}
+//			 Load the cached result
+			if (file_exists(TL_ROOT . '/' . $strCacheFile)) {
+				$objFile = new \File($strCacheFile, true);
+
+				if ($objFile->mtime > time() - 1800) {
+					$arrResult = json_decode($objFile->getContent(), true);
+				} else {
+					$objFile->delete();
+				}
+			}
 
 			// Cache the result
 			if ($arrResult === null) {
