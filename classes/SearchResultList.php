@@ -76,7 +76,7 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 						$arrDuplicates[$objResult->checksum] = $id;
 					}
 					// add pid to first duplicate and skip the result to avoid duplicates
-					else if(($idSibling = $arrDuplicates[$objResult->checksum]) !== null)
+					else if(($idSibling = $arrDuplicates[$objResult->checksum]) !== null && $arrResults[$idSibling] instanceof SearchResult)
 					{
 						$objSibling = &$arrResults[$idSibling];
 						$objSibling->pid = array_merge(!is_array($objSibling->pid) ? array($objSibling->pid) : $objSibling->pid, array($objResult->pid));
