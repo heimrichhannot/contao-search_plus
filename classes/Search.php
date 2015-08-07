@@ -60,11 +60,18 @@ class Search
 
 		// Return if the file is indexed and up to date
 		$objIndex = $objDatabase->prepare("SELECT * FROM tl_search WHERE url=? AND checksum=?")
-			->limit(1)
 			->execute($arrSet['url'], $arrSet['checksum']);
 
-		// if file already exists set new text from existing text
-		if ($objIndex->numRows && $objIndex->checksum == $arrSet['checksum']) {
+
+		// there are already indexed files containing this file (same checksum and filename)
+		if ($objIndex->numRows)
+		{
+			// Return if the page with the file is indexed
+			if(in_array($arrSet['pid'], $objIndex->fetchEach('pid')))
+			{
+				return false;
+			}
+
 			$strContent = $objIndex->text;
 		} else {
 			// parse only for the first occurrence
