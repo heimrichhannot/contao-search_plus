@@ -74,12 +74,18 @@ class Search
 
 			$strContent = $objIndex->text;
 		} else {
-			// parse only for the first occurrence
-			$parser = new \Smalot\PdfParser\Parser();
 
-			$objPDF = $parser->parseFile($strFile);
+			try{
+				// parse only for the first occurrence
+				$parser = new \Smalot\PdfParser\Parser();
+				$objPDF = $parser->parseFile($strFile);
+				$strContent = $objPDF->getText();
 
-			$strContent = $objPDF->getText();
+			} catch(\Exception $e)
+			{
+				// Missing object refernce #...
+				return false;
+			}
 		}
 
 		// Put everything together
