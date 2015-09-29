@@ -186,7 +186,7 @@ class ModuleSearchPlus extends \ModuleSearch
 																																			   == 0) ? 'even' : 'odd');
 				$objTemplate->relevance = sprintf(
 					$GLOBALS['TL_LANG']['MSC']['relevance'],
-					number_format($objResult->relevance / $objResult->relevance * 100, 2) . '%'
+					number_format($objResult->relevance / $objResult->first()->relevance * 100, 2) . '%'
 				);
 				$objTemplate->filesize  = $objResult->filesize;
 				$objTemplate->matches   = $objResult->matches;
