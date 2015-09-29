@@ -184,9 +184,14 @@ class ModuleSearchPlus extends \ModuleSearch
 				$objTemplate->title     = specialchars($objResult->title);
 				$objTemplate->class     = (($i == ($from - 1)) ? 'first ' : '') . (($i == ($to - 1) || $i == ($count - 1)) ? 'last ' : '') . (($i % 2
 																																			   == 0) ? 'even' : 'odd');
+				
+				print '<pre>';
+				print_r($objResult->relevance);
+				print '</pre>';
+
 				$objTemplate->relevance = sprintf(
 					$GLOBALS['TL_LANG']['MSC']['relevance'],
-					number_format($objResult->relevance / $objResult->first()->relevance * 100, 2) . '%'
+					number_format($objResult->relevance / $objSearchResults->first()->relevance * 100, 2) . '%'
 				);
 				$objTemplate->filesize  = $objResult->filesize;
 				$objTemplate->matches   = $objResult->matches;
