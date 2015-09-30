@@ -182,7 +182,7 @@ class ModuleSearchPlus extends \ModuleSearch
 				$objTemplate->href      = $objResult->url;
 				$objTemplate->target    = ($objResult->isValidFile() ? (($objPage->outputFormat == 'xhtml') ? ' onclick="return !window.open(this.href)"' : ' target="_blank"') : '');
 				$objTemplate->title     = specialchars($objResult->title);
-				$objTemplate->class     = (($i == ($from - 1)) ? 'first ' : '') . (($i == ($to - 1) || $i == ($count - 1)) ? 'last ' : '') . (($i % 2
+				$objTemplate->class     = (($i == ($from - 1)) ? 'first ' : '') . (($i == ($to - 1) || $i == ($count - 1)) ? 'last ' : '') . (($i % 2 == 0) ? 'even' : 'odd');
 				
 				$objTemplate->relevance = sprintf(
 					$GLOBALS['TL_LANG']['MSC']['relevance'],
