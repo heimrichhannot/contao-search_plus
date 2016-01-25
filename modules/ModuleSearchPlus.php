@@ -124,7 +124,6 @@ class ModuleSearchPlus extends \ModuleSearch
 			$query_endtime = microtime(true);
 
 			$objSearchResults = new SearchResultList(array_values($arrResult), $this->objModel);
-			$arrResult = $objSearchResults->getResults();
 
 			$count = $objSearchResults->count();
 

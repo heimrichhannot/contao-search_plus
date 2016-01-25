@@ -27,6 +27,11 @@ class SearchResult
 		$this->arrData = $arrResult;
 	}
 
+	public function isPage()
+	{
+		return ($this->mime == 'text/html');
+	}
+
 	public function isDuplicate(array $arrCheckSums)
 	{
 		if(in_array($this->checksum, $arrCheckSums)) return true;

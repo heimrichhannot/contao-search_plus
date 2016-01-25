@@ -48,13 +48,22 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 		$this->filter();
 	}
 
-
 	protected function filter()
 	{
+		$arrFiles = array();
+		$arrPages = array();
 		$arrResults = array();
 		$arrDuplicates = array();
 
-		foreach ($this->arrResults as $id => $objResult) {
+		/** @var $objResult \HeimrichHannot\SearchPlus\SearchResult */
+		foreach ($this->arrResults as $id => $objResult)
+		{
+			if($objResult->isPage())
+			{
+				$arrPages[] = $objResult;
+				$arrResults[] = $objResult;
+				continue;
+			}
 
 			// check if user has access
 			if (!$objResult->hasAccess()) {
@@ -76,7 +85,7 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 						$arrDuplicates[$objResult->checksum] = $id;
 					}
 					// add pid to first duplicate and skip the result to avoid duplicates
-					else if(($idSibling = $arrDuplicates[$objResult->checksum]) !== null && $arrResults[$idSibling] instanceof SearchResult)
+					else if(($idSibling = $arrDuplicates[$objResult->checksum]) !== null && $arrFiles[$idSibling] instanceof SearchResult)
 					{
 						$objSibling = &$arrResults[$idSibling];
 						$objSibling->pid = array_merge(!is_array($objSibling->pid) ? array($objSibling->pid) : $objSibling->pid, array($objResult->pid));
@@ -85,10 +94,24 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 				}
 			}
 			
+			$arrFiles[] = $objResult;
 			$arrResults[] = $objResult;
 		}
 
-		return $arrResults;
+		switch($this->objModule->searchOrder)
+		{
+			case 'default':
+				$this->arrResults = $arrResults;
+			break;
+			case 'pagesFirst':
+				$this->arrResults = array_merge($arrPages, $arrFiles);
+			break;
+			case 'filesFirst':
+				$this->arrResults = array_merge($arrFiles, $arrPages);
+			break;
+			default :
+				$this->arrResults = $arrResults;
+		}
 	}
 
 

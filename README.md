@@ -16,3 +16,4 @@ Don't worry, install via composer and all dependencies will be resolved like mag
 - parse pdf files with smalot/pdfparser
 - make usage of meta information from tl_files to provide better file titles (consider language too)
 - group the results in the result list
+- select the search order (show pages first, show files first or by relenvance)
