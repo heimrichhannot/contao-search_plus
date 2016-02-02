@@ -14,6 +14,31 @@ namespace HeimrichHannot\SearchPlus;
 
 class Search
 {
+	/**
+	 * Remove a page from the search index
+	 *
+	 * @param $strUrl
+	 *
+	 * @return bool
+	 */
+	public static function removePageFromIndex($strUrl)
+	{
+		$objIndex = \Database::getInstance()->prepare("SELECT id, checksum FROM tl_search WHERE url LIKE '" . $strUrl."%%'")
+			->execute($strUrl);
+		
+		if($objIndex->numRows < 1)
+		{
+			return false;
+		}
+
+		$arrIds = $objIndex->fetchEach('id');
+
+		\Database::getInstance()->execute("DELETE FROM tl_search WHERE id IN(" . implode(',', array_map('intval', $arrIds)) . ")");
+		\Database::getInstance()->execute("DELETE FROM tl_search_index WHERE pid IN(" . implode(',', array_map('intval', $arrIds)) . ")");
+
+		return true;
+	}
+
 	public static function indexFiles(array $arrLinks, $arrParentSet)
 	{
 		foreach ($arrLinks as $strFile) {
