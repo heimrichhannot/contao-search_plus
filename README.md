@@ -4,6 +4,8 @@ Extend the contao core search, to achieve more features like pdf search.
 
 ## Features
 
+- Support Access-Control-Allow-Origin within be_rebuild_index.html5
+
 ### Dependencies
 
 Don't worry, install via composer and all dependencies will be resolved like magic.

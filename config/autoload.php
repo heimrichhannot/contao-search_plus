@@ -3,7 +3,7 @@
 /**
  * Contao Open Source CMS
  *
- * Copyright (c) 2005-2015 Leo Feyer
+ * Copyright (c) 2005-2016 Leo Feyer
  *
  * @license LGPL-3.0+
  */
@@ -35,4 +35,14 @@ ClassLoader::addClasses(array
 	'HeimrichHannot\SearchPlus\Hooks'            => 'system/modules/search_plus/classes/Hooks.php',
 	'HeimrichHannot\SearchPlus\SearchResult'     => 'system/modules/search_plus/classes/SearchResult.php',
 	'HeimrichHannot\SearchPlus\Validator'        => 'system/modules/search_plus/classes/Validator.php',
+));
+
+
+/**
+ * Register the templates
+ */
+TemplateLoader::addFiles(array
+(
+	'be_rebuild_index' => 'system/modules/search_plus/templates/backend',
+	'search_default'   => 'system/modules/search_plus/templates/search',
 ));
