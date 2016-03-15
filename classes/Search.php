@@ -225,7 +225,7 @@ class Search
 	{
 		$arrUrl = parse_url($varValue);
 
-		$strFile = urldecode($arrUrl['path']);
+		$strFile = $arrUrl['path'];
 
 		// linked pdf is an valid absolute url
 		if (isset($arrUrl['scheme']) && in_array($arrUrl['scheme'], array('http', 'https'))) {
@@ -242,7 +242,7 @@ class Search
 
 		// check if file exists
 		if ($strFile !== null) {
-			$strFile = ltrim($strFile, '/');
+			$strFile = ltrim(urldecode($strFile), '/');
 
 			if (!file_exists(TL_ROOT . '/' . $strFile)) {
 				$strFile = null;
