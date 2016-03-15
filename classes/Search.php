@@ -225,7 +225,7 @@ class Search
 	{
 		$arrUrl = parse_url($varValue);
 
-		$strFile = $arrUrl['path'];
+		$strFile = urldecode($arrUrl['path']);
 
 		// linked pdf is an valid absolute url
 		if (isset($arrUrl['scheme']) && in_array($arrUrl['scheme'], array('http', 'https'))) {
