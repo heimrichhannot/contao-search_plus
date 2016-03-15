@@ -49,4 +49,9 @@ class Validator extends \Validator
 
 		return true;
 	}
+
+	public static function isRebuildIndexRequest()
+	{
+		return (strpos($_SERVER['HTTP_REFERER'], 'main.php?act=index&do=maintenance') !== false);
+	}
 }

@@ -1,0 +1,8 @@
+<div class="limitsearchablepages">
+	<div id="ctrl_limitsearchablepages" class="tl_checkbox_single_container">
+		<input type="hidden" name="limitsearchablepages" value="">
+		<input type="checkbox" name="limitsearchablepages" id="opt_limitsearchablepages" class="tl_checkbox" value="1" onclick="SearchPlus.toggleSearchablePages(this, 'sub_limitsearchablepages', 'limitsearchablepages')" onfocus="Backend.getScrollOffset()">
+		<label for="opt_limitsearchablepages"><?= $this->limitSearchablePagesLabel[0]; ?></label>
+	</div>
+	<p class="tl_help tl_tip" title=""><?= $this->limitSearchablePagesLabel[1]; ?></p>
+</div>

@@ -39,6 +39,27 @@ class Search
 		return true;
 	}
 
+	public static function truncate($arrSet)
+	{
+		// Return if the page is indexed and up to date
+		$objIndex = \Database::getInstance()->prepare("SELECT id FROM tl_search WHERE url=? AND pid=?")
+			->limit(1)
+			->execute($arrSet['url'], $arrSet['pid']);
+
+		if ($objIndex->numRows < 1)
+		{
+			return false;
+		}
+
+		// Remove keywords
+		\Database::getInstance()->prepare("DELETE FROM tl_search_index WHERE pid=?")
+			->execute($objIndex->id);
+
+		// Remove result
+		\Database::getInstance()->prepare("DELETE FROM tl_search WHERE id=?")
+			->execute($objIndex->id);
+	}
+
 	public static function indexFiles(array $arrLinks, $arrParentSet)
 	{
 		foreach ($arrLinks as $strFile) {

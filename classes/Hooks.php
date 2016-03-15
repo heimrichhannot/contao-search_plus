@@ -13,19 +13,17 @@ namespace HeimrichHannot\SearchPlus;
 
 class Hooks
 {
-	public function initializeSystemHook()
-	{
-		if(TL_MODE == 'BE')
-		{
-		}
-		Environment::allowOrigins();
-	}
-
 	public function indexPageHook($strContent, $arrData, $arrSet)
 	{
 		if (preg_match_all('/href="(?<links>[^\"<]+\.pdf)"/i', $strContent, $matches))
 		{
 			Search::indexFiles($matches['links'], $arrSet);
 		}
+		else if(Validator::isRebuildIndexRequest())
+		{
+			Search::truncate($arrSet);
+		}
 	}
+
+
 }
