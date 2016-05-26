@@ -76,7 +76,28 @@ class ModuleSearchPlus extends \ModuleSearch
 				$intRootId = $objPage->rootId;
 				$arrPages  = $this->Database->getChildRecords($objPage->rootId, 'tl_page');
 			}
+			
+			// customize by module
+			$arrFilterPages = deserialize($this->filterPages, true);
 
+			if (!empty($arrFilterPages) && $this->pageMode)
+			{
+				if ($this->addPageDepth)
+				{
+					$arrFilterPages = array_merge($arrFilterPages, \Database::getInstance()->getChildRecords($arrFilterPages, 'tl_page'));
+				}
+
+				switch ($this->pageMode)
+				{
+					case 'include':
+						$arrPages = $arrFilterPages;
+						break;
+					case 'exclude':
+						$arrPages = array_diff($arrPages, $arrFilterPages);
+						break;
+				}
+			}
+				
 			// HOOK: add custom logic (see #5223)
 			if (isset($GLOBALS['TL_HOOKS']['customizeSearch']) && is_array($GLOBALS['TL_HOOKS']['customizeSearch'])) {
 				foreach ($GLOBALS['TL_HOOKS']['customizeSearch'] as $callback) {
@@ -93,7 +114,7 @@ class ModuleSearchPlus extends \ModuleSearch
 			}
 
 			$arrResult       = null;
-			$strChecksum     = md5($strKeywords . $strQueryType . $intRootId . $blnFuzzy);
+			$strChecksum     = md5($strKeywords . $strQueryType . $intRootId . $blnFuzzy . implode(',', $arrPages));
 			$query_starttime = microtime(true);
 			$strCacheFile    = 'system/cache/search/' . $strChecksum . '.json';
 
