@@ -90,12 +90,22 @@ class Search
 			$arrMeta['title'] = specialchars($objFile->basename);
 		}
 
+		$strHref = \Environment::get('base') . \Environment::get('request');
+
+		// Remove an existing file parameter
+		if (preg_match('/(&(amp;)?|\?)file=/', $strHref))
+		{
+			$strHref = preg_replace('/(&(amp;)?|\?)file=[^&]+/', '', $strHref);
+		}
+
+		$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . \System::urlEncode($objFile->value);
+
 		$arrSet = array
 		(
 			'pid'       => $arrParentSet['pid'],
 			'tstamp'    => time(),
 			'title'     => $arrMeta['title'],
-			'url'       => $objFile->value,
+			'url'       => $strHref,
 			'filesize'  => \System::getReadableSize($objFile->size, 2),
 			'checksum'  => $objFile->hash,
 			'protected' => $arrParentSet['protected'],
