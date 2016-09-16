@@ -115,8 +115,8 @@ class Search
 		);
 
 		// Return if the file is indexed and up to date
-		$objIndex = $objDatabase->prepare("SELECT * FROM tl_search WHERE url=? AND checksum=?")
-			->execute($arrSet['url'], $arrSet['checksum']);
+		$objIndex = $objDatabase->prepare("SELECT * FROM tl_search WHERE pid=? AND checksum=?")
+			->execute($arrSet['pid'], $arrSet['checksum']);
 
 
 		// there are already indexed files containing this file (same checksum and filename)
