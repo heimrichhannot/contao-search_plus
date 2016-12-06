@@ -12,6 +12,8 @@
 namespace HeimrichHannot\SearchPlus;
 
 
+use HeimrichHannot\Haste\Util\Url;
+
 class SearchResult
 {
 	protected $arrData = array();
@@ -43,9 +45,13 @@ class SearchResult
 	{
 		if($this->mime == 'text/html') return false;
 
-		if(!is_file(TL_ROOT. '/' . $this->url)) return false;
+        $arrParts = Url::getParametersFromUri($this->url);
 
-		if(!file_exists(TL_ROOT. '/' . $this->url)) return false;
+        if(!isset($arrParts['file'])) return false;
+
+		if(!is_file(TL_ROOT. '/' . $arrParts['file'])) return false;
+
+		if(!file_exists(TL_ROOT. '/' . $arrParts['file'])) return false;
 
 		return true;
 	}
