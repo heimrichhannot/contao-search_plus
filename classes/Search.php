@@ -146,7 +146,7 @@ class Search
 
 		// Put everything together
 		$arrSet['text'] = $strContent;
-		$arrSet['text'] = trim(preg_replace('/ +/', ' ', \String::decodeEntities($arrSet['text'])));
+		$arrSet['text'] = trim(preg_replace('/ +/', ' ', \StringUtil::decodeEntities($arrSet['text'])));
 
 		// Update an existing old entry
 		if ($objIndex->pid == $arrSet['pid']) {

@@ -102,7 +102,7 @@ class ModuleSearchPlus extends \ModuleSearch
 			if (isset($GLOBALS['TL_HOOKS']['customizeSearch']) && is_array($GLOBALS['TL_HOOKS']['customizeSearch'])) {
 				foreach ($GLOBALS['TL_HOOKS']['customizeSearch'] as $callback) {
 					$this->import($callback[0]);
-					$this->$callback[0]->$callback[1]($arrPages, $strKeywords, $strQueryType, $blnFuzzy);
+					$this->{$callback[0]}->{$callback[1]}($arrPages, $strKeywords, $strQueryType, $blnFuzzy);
 				}
 			}
 
@@ -231,7 +231,7 @@ class ModuleSearchPlus extends \ModuleSearch
 
 				// Shorten the context and highlight all keywords
 				if (!empty($arrContext)) {
-					$objTemplate->context = trim(\String::substrHtml(implode('…', $arrContext), $this->totalLength));
+					$objTemplate->context = trim(\StringUtil::substrHtml(implode('…', $arrContext), $this->totalLength));
 					$objTemplate->context = preg_replace(
 						'/(\PL)(' . implode('|', $arrMatches) . ')(\PL)/ui',
 						'$1<span class="highlight">$2</span>$3',

@@ -61,7 +61,7 @@ class RebuildIndex extends \Backend implements \executable
 				foreach ($GLOBALS['TL_HOOKS']['getSearchablePages'] as $callback)
 				{
 					$this->import($callback[0]);
-					$arrPages = $this->$callback[0]->$callback[1]($arrPages);
+					$arrPages = $this->{$callback[0]}->{$callback[1]}($arrPages);
 				}
 			}
 
@@ -172,7 +172,7 @@ class RebuildIndex extends \Backend implements \executable
 			{
 				foreach ($GLOBALS['TL_HOOKS']['getSearchablePages'] as $callback)
 				{
-					$arrPages = \System::importStatic($callback[0])->$callback[1]($arrPages);
+					$arrPages = \System::importStatic($callback[0])->{$callback[1]}($arrPages);
 				}
 			}
 
