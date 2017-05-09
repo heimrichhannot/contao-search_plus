@@ -128,7 +128,7 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 			$this->first();
 		}
 
-		$this->arrResults[$this->intIndex]->$strKey = $varValue;
+		$this->arrResults[$this->intIndex]->{$strKey} = $varValue;
 	}
 
 
@@ -146,9 +146,9 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 			$this->first();
 		}
 
-		if (isset($this->arrResults[$this->intIndex]->$strKey))
+		if (isset($this->arrResults[$this->intIndex]->{$strKey}))
 		{
-			return $this->arrResults[$this->intIndex]->$strKey;
+			return $this->arrResults[$this->intIndex]->{$strKey};
 		}
 
 		return null;
@@ -169,7 +169,7 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 			$this->first();
 		}
 
-		return isset($this->arrResults[$this->intIndex]->$strKey);
+		return isset($this->arrResults[$this->intIndex]->{$strKey});
 	}
 
 
@@ -332,13 +332,13 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 		{
 			$strPk = $this->current()->getPk();
 
-			if ($strKey != 'id' && isset($this->$strPk))
+			if ($strKey != 'id' && isset($this->{$strPk}))
 			{
-				$return[$this->$strPk] = $this->$strKey;
+				$return[$this->$strPk] = $this->{$strKey};
 			}
 			else
 			{
-				$return[] = $this->$strKey;
+				$return[] = $this->{$strKey};
 			}
 		}
 
