@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.0.22] - 2017-05-09
+## [1.0.23] - 2017-05-09
 
 ### Fixed
 - composer.json
