@@ -106,7 +106,7 @@ class Search
 			'tstamp'    => time(),
 			'title'     => $arrMeta['title'],
 			'url'       => $strHref,
-			'filesize'  => \System::getReadableSize($objFile->size, 2),
+			'filesize'  => explode(" ", \System::getReadableSize($objFile->size, 2))[0],
 			'checksum'  => $objFile->hash,
 			'protected' => $arrParentSet['protected'],
 			'groups'    => $arrParentSet['groups'],
