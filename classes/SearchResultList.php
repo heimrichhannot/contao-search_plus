@@ -334,7 +334,7 @@ class SearchResultList implements \ArrayAccess, \Countable, \IteratorAggregate
 
 			if ($strKey != 'id' && isset($this->{$strPk}))
 			{
-				$return[$this->$strPk] = $this->{$strKey};
+				$return[$this->{$strPk}] = $this->{$strKey};
 			}
 			else
 			{
