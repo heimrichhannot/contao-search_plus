@@ -18,8 +18,7 @@ $arrFields = [
     'search_pdfMaxParsingSize'               => [
         'label'     => &$GLOBALS['TL_LANG']['tl_settings']['search_pdfMaxParsingSize'],
         'inputType' => 'text',
-        'eval'      => ['tl_class' => 'w50', 'rgxp'=>'natural', 'nospace'=>true],
-        'default'   => 0
+        'eval'      => ['tl_class' => 'w50', 'rgxp'=>'natural', 'nospace'=>true]
     ],
 ];
 

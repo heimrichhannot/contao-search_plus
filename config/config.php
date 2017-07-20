@@ -8,6 +8,13 @@
  * @license http://www.gnu.org/licences/lgpl-3.0.html LGPL
  */
 
+
+/**
+ * Settings Default values
+ */
+
+$GLOBALS['TL_CONFIG']['search_pdfMaxParsingSize'] = 0;
+
 /**
  * Front end modules
  */

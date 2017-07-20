@@ -100,19 +100,21 @@ class Search
 
 		$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . \System::urlEncode($objFile->value);
 
-		$arrSet = array
-		(
-			'pid'       => $arrParentSet['pid'],
-			'tstamp'    => time(),
-			'title'     => $arrMeta['title'],
-			'url'       => $strHref,
-			'filesize'  => explode(" ", \System::getReadableSize($objFile->size, 2))[0],
-			'checksum'  => $objFile->hash,
-			'protected' => $arrParentSet['protected'],
-			'groups'    => $arrParentSet['groups'],
-			'language'  => $arrParentSet['language'],
-			'mime'      => $objFile->mime
-		);
+        $filesize = round($objFile->size / 1024,2);
+
+        $arrSet = array
+        (
+            'pid'       => $arrParentSet['pid'],
+            'tstamp'    => time(),
+            'title'     => $arrMeta['title'],
+            'url'       => $strHref,
+            'filesize'  => $filesize,
+            'checksum'  => $objFile->hash,
+            'protected' => $arrParentSet['protected'],
+            'groups'    => $arrParentSet['groups'],
+            'language'  => $arrParentSet['language'],
+            'mime'      => $objFile->mime
+        );
 
 		// Return if the file is indexed and up to date
 		$objIndex = $objDatabase->prepare("SELECT * FROM tl_search WHERE pid=? AND checksum=?")
@@ -130,7 +132,12 @@ class Search
 
 			$strContent = $objIndex->text;
 		} else {
-
+            // return if file size higher than max file size settings
+            if ($GLOBALS['TL_CONFIG']['search_pdfMaxParsingSize'] > 0 &&
+                $arrSet['filesize'] > $GLOBALS['TL_CONFIG']['search_pdfMaxParsingSize'])
+            {
+                return false;
+            }
 			try{
 				// parse only for the first occurrence
 				$parser = new \Smalot\PdfParser\Parser();

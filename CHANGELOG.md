@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.25] - 2017-07-20
+
+### Added 
+- set max pdf parsing file size in settings
+
+### Fixed
+- pdf size calculation
+
 ## [1.0.24] - 2017-07-19
 
 ### Added
