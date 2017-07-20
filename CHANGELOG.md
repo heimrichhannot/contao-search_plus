@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.26] - 2017-07-20
+
+### Fixed
+- wrong namespace for PageModel (ignore search jumpTo)
+- deprecated call in ModuleSearchPlus
+
 ## [1.0.25] - 2017-07-20
 
 ### Added 

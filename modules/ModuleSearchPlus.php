@@ -55,10 +55,12 @@ class ModuleSearchPlus extends \ModuleSearch
 		$objFormTemplate->id           = (\Config::get('disableAlias') && \Input::get('id')) ? \Input::get('id') : false;
 		$objFormTemplate->action       = ampersand(\Environment::get('indexFreeRequest'));
 
-		// Redirect page
-		if ($this->jumpTo && ($objTarget = $this->objModel->getRelated('jumpTo')) !== null) {
-			$objFormTemplate->action = $this->generateFrontendUrl($objTarget->row());
-		}
+        // Redirect page
+        if ($this->jumpTo && ($objTarget = $this->objModel->getRelated('jumpTo')) instanceof \PageModel)
+        {
+            /** @var PageModel $objTarget */
+            $this->Template->action = $objTarget->getFrontendUrl();
+        }
 
 		$this->Template->form       = $objFormTemplate->parse();
 		$this->Template->pagination = '';
