@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - added action (jumpTo) to wrong template
 
+### Changed
+- updated readme
+
 ## [1.0.26] - 2017-07-20
 
 ### Fixed
