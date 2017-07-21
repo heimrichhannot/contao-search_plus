@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.27] - 2017-07-21
+
+### Fixed
+- added action (jumpTo) to wrong template
+
 ## [1.0.26] - 2017-07-20
 
 ### Fixed

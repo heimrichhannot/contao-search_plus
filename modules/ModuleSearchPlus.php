@@ -59,7 +59,7 @@ class ModuleSearchPlus extends \ModuleSearch
         if ($this->jumpTo && ($objTarget = $this->objModel->getRelated('jumpTo')) instanceof \PageModel)
         {
             /** @var PageModel $objTarget */
-            $this->Template->action = $objTarget->getFrontendUrl();
+            $objFormTemplate->action = $objTarget->getFrontendUrl();
         }
 
 		$this->Template->form       = $objFormTemplate->parse();
