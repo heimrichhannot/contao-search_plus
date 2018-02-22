@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] -2018-02-22
+
+#### Fixed
+* only store first 2000 letters of pdf in `tl_search` 
+* do not index numbers, words that are less than 2 letters long, or .pdf file names in `tl_search_index`
+
 ## [1.1.0] -2018-02-22
 
 #### Added

@@ -14,96 +14,92 @@ namespace HeimrichHannot\SearchPlus;
 
 class Search
 {
-	/**
-	 * Remove a page from the search index
-	 *
-	 * @param $strUrl
-	 *
-	 * @return bool
-	 */
-	public static function removePageFromIndex($strUrl)
-	{
-		$objIndex = \Database::getInstance()->prepare("SELECT id, checksum FROM tl_search WHERE url LIKE '" . $strUrl."%%'")
-			->execute($strUrl);
-		
-		if($objIndex->numRows < 1)
-		{
-			return false;
-		}
+    /**
+     * Remove a page from the search index
+     *
+     * @param $strUrl
+     *
+     * @return bool
+     */
+    public static function removePageFromIndex($strUrl)
+    {
+        $objIndex = \Database::getInstance()->prepare("SELECT id, checksum FROM tl_search WHERE url LIKE '" . $strUrl . "%%'")
+            ->execute($strUrl);
 
-		$arrIds = $objIndex->fetchEach('id');
+        if ($objIndex->numRows < 1) {
+            return false;
+        }
 
-		\Database::getInstance()->execute("DELETE FROM tl_search WHERE id IN(" . implode(',', array_map('intval', $arrIds)) . ")");
-		\Database::getInstance()->execute("DELETE FROM tl_search_index WHERE pid IN(" . implode(',', array_map('intval', $arrIds)) . ")");
+        $arrIds = $objIndex->fetchEach('id');
 
-		return true;
-	}
+        \Database::getInstance()->execute("DELETE FROM tl_search WHERE id IN(" . implode(',', array_map('intval', $arrIds)) . ")");
+        \Database::getInstance()->execute("DELETE FROM tl_search_index WHERE pid IN(" . implode(',', array_map('intval', $arrIds)) . ")");
 
-	public static function truncate($arrSet)
-	{
-		// Return if the page is indexed and up to date
-		$objIndex = \Database::getInstance()->prepare("SELECT id FROM tl_search WHERE url=? AND pid=?")
-			->limit(1)
-			->execute($arrSet['url'], $arrSet['pid']);
+        return true;
+    }
 
-		if ($objIndex->numRows < 1)
-		{
-			return false;
-		}
+    public static function truncate($arrSet)
+    {
+        // Return if the page is indexed and up to date
+        $objIndex = \Database::getInstance()->prepare("SELECT id FROM tl_search WHERE url=? AND pid=?")
+            ->limit(1)
+            ->execute($arrSet['url'], $arrSet['pid']);
 
-		// Remove keywords
-		\Database::getInstance()->prepare("DELETE FROM tl_search_index WHERE pid=?")
-			->execute($objIndex->id);
+        if ($objIndex->numRows < 1) {
+            return false;
+        }
 
-		// Remove result
-		\Database::getInstance()->prepare("DELETE FROM tl_search WHERE id=?")
-			->execute($objIndex->id);
-	}
+        // Remove keywords
+        \Database::getInstance()->prepare("DELETE FROM tl_search_index WHERE pid=?")
+            ->execute($objIndex->id);
 
-	public static function indexFiles(array $arrLinks, $arrParentSet)
-	{
-		foreach ($arrLinks as $strFile) {
-			if (($strFile = static::getValidPath($strFile, array(\Environment::get('host')))) === null) {
-				continue;
-			}
+        // Remove result
+        \Database::getInstance()->prepare("DELETE FROM tl_search WHERE id=?")
+            ->execute($objIndex->id);
+    }
 
-			static::addToPDFSearchIndex($strFile, $arrParentSet);
-		}
-	}
+    public static function indexFiles(array $arrLinks, $arrParentSet)
+    {
+        foreach ($arrLinks as $strFile) {
+            if (($strFile = static::getValidPath($strFile, [\Environment::get('host')])) === null) {
+                continue;
+            }
 
-	protected static function addToPDFSearchIndex($strFile, $arrParentSet)
-	{
-		$objFile = new \File($strFile);
+            static::addToPDFSearchIndex($strFile, $arrParentSet);
+        }
+    }
 
-		if (!Validator::isValidPDF($objFile)) {
-			return false;
-		}
+    protected static function addToPDFSearchIndex($strFile, $arrParentSet)
+    {
+        $objFile = new \File($strFile);
 
-		$objDatabase = \Database::getInstance();
+        if (!Validator::isValidPDF($objFile)) {
+            return false;
+        }
 
-		$objModel = $objFile->getModel();
+        $objDatabase = \Database::getInstance();
 
-		$arrMeta = \Frontend::getMetaData($objModel->meta, $arrParentSet['language']);
+        $objModel = $objFile->getModel();
 
-		// Use the file name as title if none is given
-		if ($arrMeta['title'] == '') {
-			$arrMeta['title'] = specialchars($objFile->basename);
-		}
+        $arrMeta = \Frontend::getMetaData($objModel->meta, $arrParentSet['language']);
 
-		$strHref = \Environment::get('base') . \Environment::get('request');
+        // Use the file name as title if none is given
+        if ($arrMeta['title'] == '') {
+            $arrMeta['title'] = specialchars($objFile->basename);
+        }
 
-		// Remove an existing file parameter
-		if (preg_match('/(&(amp;)?|\?)file=/', $strHref))
-		{
-			$strHref = preg_replace('/(&(amp;)?|\?)file=[^&]+/', '', $strHref);
-		}
+        $strHref = \Environment::get('base') . \Environment::get('request');
 
-		$strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . \System::urlEncode($objFile->value);
+        // Remove an existing file parameter
+        if (preg_match('/(&(amp;)?|\?)file=/', $strHref)) {
+            $strHref = preg_replace('/(&(amp;)?|\?)file=[^&]+/', '', $strHref);
+        }
 
-        $filesize = round($objFile->size / 1024,2);
+        $strHref .= ((\Config::get('disableAlias') || strpos($strHref, '?') !== false) ? '&amp;' : '?') . 'file=' . \System::urlEncode($objFile->value);
 
-        $arrSet = array
-        (
+        $filesize = round($objFile->size / 1024, 2);
+
+        $arrSet = [
             'pid'       => $arrParentSet['pid'],
             'tstamp'    => time(),
             'title'     => $arrMeta['title'],
@@ -114,160 +110,167 @@ class Search
             'groups'    => $arrParentSet['groups'],
             'language'  => $arrParentSet['language'],
             'mime'      => $objFile->mime
-        );
+        ];
 
-		// Return if the file is indexed and up to date
-		$objIndex = $objDatabase->prepare("SELECT * FROM tl_search WHERE pid=? AND checksum=?")
-			->execute($arrSet['pid'], $arrSet['checksum']);
+        // Return if the file is indexed and up to date
+        $objIndex = $objDatabase->prepare("SELECT * FROM tl_search WHERE pid=? AND checksum=?")
+            ->execute($arrSet['pid'], $arrSet['checksum']);
 
 
-		// there are already indexed files containing this file (same checksum and filename)
-		if ($objIndex->numRows)
-		{
-			// Return if the page with the file is indexed
-			if(in_array($arrSet['pid'], $objIndex->fetchEach('pid')))
-			{
-				return false;
-			}
-
-			$strContent = $objIndex->text;
-		} else {
-            // return if file size higher than max file size settings
-            if ($GLOBALS['TL_CONFIG']['search_pdfMaxParsingSize'] > 0 &&
-                $arrSet['filesize'] > $GLOBALS['TL_CONFIG']['search_pdfMaxParsingSize'])
-            {
+        // there are already indexed files containing this file (same checksum and filename)
+        if ($objIndex->numRows) {
+            // Return if the page with the file is indexed
+            if (in_array($arrSet['pid'], $objIndex->fetchEach('pid'))) {
                 return false;
             }
-			try{
-				// parse only for the first occurrence
-				$parser = new \Smalot\PdfParser\Parser();
-				$objPDF = $parser->parseFile($strFile);
-				$strContent = $objPDF->getText();
 
-			} catch(\Exception $e)
-			{
-				// Missing object refernce #...
-				return false;
-			}
-		}
+            $strContent = $objIndex->text;
+        } else {
 
-		// Put everything together
-		$arrSet['text'] = $strContent;
-		$arrSet['text'] = trim(preg_replace('/ +/', ' ', \StringUtil::decodeEntities($arrSet['text'])));
+            // return if file size higher than max file size settings
+            if (\Config::get('search_pdfMaxParsingSize') > 0 && $arrSet['filesize'] > \Config::get('search_pdfMaxParsingSize')) {
+                return false;
+            }
 
-		// Update an existing old entry
-		if ($objIndex->pid == $arrSet['pid']) {
-			$objDatabase->prepare("UPDATE tl_search %s WHERE id=?")
-				->set($arrSet)
-				->execute($objIndex->id);
+            try {
+                // parse only for the first occurrence
+                $parser     = new \Smalot\PdfParser\Parser();
+                $objPDF     = $parser->parseFile($strFile);
+                $strContent = $objPDF->getText();
 
-			$intInsertId = $objIndex->id;
-		} else {
-			$objInsertStmt = $objDatabase->prepare("INSERT INTO tl_search %s")
-				->set($arrSet)
-				->execute();
+            } catch (\Exception $e) {
+                // Missing object refernce #...
+                return false;
+            }
+        }
 
-			$intInsertId = $objInsertStmt->insertId;
-		}
+        // Put everything together
+        $strContent = trim(preg_replace('/ +/', ' ', \StringUtil::decodeEntities($strContent)));
 
-		static::indexContent($arrSet, $intInsertId);
-	}
+        // save only first 2000 characters for performance reasons
+        $arrSet['text'] = substr($strContent, 0, 2000);
 
+        // Update an existing old entry
+        if ($objIndex->pid == $arrSet['pid']) {
+            $objDatabase->prepare("UPDATE tl_search %s WHERE id=?")
+                ->set($arrSet)
+                ->execute($objIndex->id);
 
-	protected static function indexContent($arrSet, $pid)
-	{
-		$objDatabase = \Database::getInstance();
+            $intInsertId = $objIndex->id;
+        } else {
+            $objInsertStmt = $objDatabase->prepare("INSERT INTO tl_search %s")
+                ->set($arrSet)
+                ->execute();
 
-		// Remove quotes
-		$strText = $arrSet['title'] . ' ' . $arrSet['text'];
-		$strText = str_replace(array('´', '`'), "'", $strText);
+            $intInsertId = $objInsertStmt->insertId;
+        }
 
-		// Remove special characters
-		if (function_exists('mb_eregi_replace')) {
-			$strText = mb_eregi_replace('[^[:alnum:]\'\.:,\+_-]|- | -|\' | \'|\. |\.$|: |:$|, |,$', ' ', $strText);
-		} else {
-			$strText = preg_replace(
-				array('/- /', '/ -/', "/' /", "/ '/", '/\. /', '/\.$/', '/: /', '/:$/', '/, /', '/,$/', '/[^\pN\pL\'\.:,\+_-]/u'),
-				' ',
-				$strText
-			);
-		}
-
-		// Split words
-		$arrWords = preg_split('/ +/', utf8_strtolower($strText));
-		$arrIndex = array();
-
-		// Index words
-		foreach ($arrWords as $strWord) {
-			// Strip a leading plus (see #4497)
-			if (strncmp($strWord, '+', 1) === 0) {
-				$strWord = substr($strWord, 1);
-			}
-
-			$strWord = trim($strWord);
-
-			if (!strlen($strWord) || preg_match('/^[\.:,\'_-]+$/', $strWord)) {
-				continue;
-			}
-
-			if (preg_match('/^[\':,]/', $strWord)) {
-				$strWord = substr($strWord, 1);
-			}
-
-			if (preg_match('/[\':,\.]$/', $strWord)) {
-				$strWord = substr($strWord, 0, -1);
-			}
-
-			if (isset($arrIndex[$strWord])) {
-				$arrIndex[$strWord]++;
-				continue;
-			}
-
-			$arrIndex[$strWord] = 1;
-		}
-		
-		// Remove existing index
-		$objDatabase->prepare("DELETE FROM tl_search_index WHERE pid=?")
-			->execute($pid);
-
-		// Create new index
-		foreach ($arrIndex as $k => $v) {
-			$objDatabase->prepare("INSERT INTO tl_search_index (pid, word, relevance, language) VALUES (?, ?, ?, ?)")
-				->execute($pid, $k, $v, $arrSet['language']);
-		}
-	}
+        static::indexContent($arrSet, $strContent, $intInsertId);
+    }
 
 
-	public static function getValidPath($varValue, array $arrHosts = array())
-	{
-		$arrUrl = parse_url($varValue);
+    protected static function indexContent($arrSet, $strContent, $pid)
+    {
+        $objDatabase = \Database::getInstance();
 
-		$strFile = $arrUrl['path'];
+        // Remove quotes
+        $strText = $arrSet['title'] . ' ' . $strContent;
+        $strText = str_replace(['´', '`'], "'", $strText);
 
-		// linked pdf is an valid absolute url
-		if (isset($arrUrl['scheme']) && in_array($arrUrl['scheme'], array('http', 'https'))) {
-			if (isset($arrUrl['host']) && !in_array($arrUrl['host'], $arrHosts)) {
-				$strFile = null;
-			}
-		}
-		
-		// check for download link
-		if (isset($arrUrl['query']) && preg_match('#file=(?<path>.*.pdf)#i', $arrUrl['query'], $m)) {
-			$strFile = $m['path'];
-		}
+        unset($strContent);
+
+        // Remove special characters
+        if (function_exists('mb_eregi_replace')) {
+            $strText = mb_eregi_replace('[^[:alnum:]\'\.:,\+_-]|- | -|\' | \'|\. |\.$|: |:$|, |,$', ' ', $strText);
+        } else {
+            $strText = preg_replace(['/- /', '/ -/', "/' /", "/ '/", '/\. /', '/\.$/', '/: /', '/:$/', '/, /', '/,$/', '/[^\w\'.:,+-]/u'], ' ', $strText);
+        }
+
+        // Split words
+        $arrWords = preg_split('/ +/', utf8_strtolower($strText));
+        $arrIndex = [];
+
+        // Index words
+        foreach ($arrWords as $strWord) {
+            // Strip a leading plus (see #4497)
+            if (strncmp($strWord, '+', 1) === 0) {
+                $strWord = substr($strWord, 1);
+            }
+
+            $strWord   = trim($strWord);
+            $strLength = strlen($strWord);
+
+            if (!$strLength || preg_match('/^[\.:,\'_-]+$/', $strWord) || $strLength < 3) {
+                continue;
+            }
+
+            if (strpos($strWord, '.pdf')) {
+                continue;
+            }
+
+            // do not index numbers
+            if (preg_match('/\d+/', $strWord)) {
+                continue;
+            }
+
+            if (preg_match('/^[\':,]/', $strWord)) {
+                $strWord = substr($strWord, 1);
+            }
+
+            if (preg_match('/[\':,\.]$/', $strWord)) {
+                $strWord = substr($strWord, 0, -1);
+            }
+
+            if (isset($arrIndex[$strWord])) {
+                $arrIndex[$strWord]++;
+                continue;
+            }
+
+            $arrIndex[$strWord] = 1;
+        }
+
+        // Remove existing index
+        $objDatabase->prepare("DELETE FROM tl_search_index WHERE pid=?")
+            ->execute($pid);
+
+        // Create new index
+        foreach ($arrIndex as $k => $v) {
+            $objDatabase->prepare("INSERT INTO tl_search_index (pid, word, relevance, language) VALUES (?, ?, ?, ?)")
+                ->execute($pid, $k, $v, $arrSet['language']);
+        }
+    }
 
 
-		// check if file exists
-		if ($strFile !== null) {
-			$strFile = ltrim(urldecode($strFile), '/');
+    public static function getValidPath($varValue, array $arrHosts = [])
+    {
+        $arrUrl = parse_url($varValue);
 
-			if (!file_exists(TL_ROOT . '/' . $strFile)) {
-				$strFile = null;
-			}
-		}
+        $strFile = $arrUrl['path'];
 
-		return $strFile;
-	}
+        // linked pdf is an valid absolute url
+        if (isset($arrUrl['scheme']) && in_array($arrUrl['scheme'], ['http', 'https'])) {
+            if (isset($arrUrl['host']) && !in_array($arrUrl['host'], $arrHosts)) {
+                $strFile = null;
+            }
+        }
+
+        // check for download link
+        if (isset($arrUrl['query']) && preg_match('#file=(?<path>.*.pdf)#i', $arrUrl['query'], $m)) {
+            $strFile = $m['path'];
+        }
+
+
+        // check if file exists
+        if ($strFile !== null) {
+            $strFile = ltrim(urldecode($strFile), '/');
+
+            if (!file_exists(TL_ROOT . '/' . $strFile)) {
+                $strFile = null;
+            }
+        }
+
+        return $strFile;
+    }
 
 
 }
