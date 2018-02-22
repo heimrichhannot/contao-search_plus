@@ -26,12 +26,16 @@ Don't worry, install via composer and all dependencies will be resolved like mag
 
 Add following line to your composer.json required section:
 
-    "heimrichhannot/contao-search_plus" : "~1.0.27"
+    "heimrichhannot/contao-search_plus" : "^1.0"
     
 You can also add the package via commandline:
 
-    composer require heimrichhannot/contao-search_plus:~1.0.27
+    composer require heimrichhannot/contao-search_plus
 
 ### Templates
 
 You need to add two templates: `mod_search_simple` and `mod_search_advanced`. In your `mod_search` template you need to add `<?php echo $this->form ?>` to output the correct search form template. 
+
+### Settings
+
+You can disable PDF search on the Contao setting page. If enabled, an option to set the maximum pdf size to parse, is given.
