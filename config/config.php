@@ -13,6 +13,7 @@
  * Settings Default values
  */
 
+$GLOBALS['TL_CONFIG']['search_enablePdfIndexing'] = true;
 $GLOBALS['TL_CONFIG']['search_pdfMaxParsingSize'] = 0;
 
 /**
