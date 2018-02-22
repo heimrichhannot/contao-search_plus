@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] -2018-02-22
+
+#### Added
+* option to disable pdf indexing
+* enhanced translations
+
 ## [1.0.27] - 2017-07-21
 
 ### Fixed
