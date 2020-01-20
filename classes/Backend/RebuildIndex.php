@@ -10,6 +10,8 @@
 
 namespace HeimrichHannot\SearchPlus\Backend;
 
+use Contao\BackendTemplate;
+
 class RebuildIndex extends \Backend implements \executable
 {
 
@@ -185,7 +187,7 @@ class RebuildIndex extends \Backend implements \executable
 
 	protected function generatePageSelection()
 	{
-		$objTemplate = new \BackendTemplate('be_rebuild_index_pageselection');
+		$objTemplate = new BackendTemplate('be_rebuild_index_pageselection');
 		$objTemplate->limitSearchablePagesLabel = $GLOBALS['TL_LANG']['tl_maintenance']['limitsearchablepages'];
 		return $objTemplate->parse();
 	}

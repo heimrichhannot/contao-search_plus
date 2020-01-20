@@ -12,6 +12,9 @@
 namespace HeimrichHannot\SearchPlus;
 
 
+use Contao\Database;
+use Contao\System;
+
 class Search
 {
     /**
@@ -171,7 +174,7 @@ class Search
 
     protected static function indexContent($arrSet, $strContent, $pid)
     {
-        $objDatabase = \Database::getInstance();
+        $objDatabase = Database::getInstance();
 
         // Remove quotes
         $strText = $arrSet['title'] . ' ' . $strContent;
@@ -234,9 +237,18 @@ class Search
             ->execute($pid);
 
         // Create new index
+        $errors = [];
         foreach ($arrIndex as $k => $v) {
-            $objDatabase->prepare("INSERT INTO tl_search_index (pid, word, relevance, language) VALUES (?, ?, ?, ?)")
-                ->execute($pid, $k, $v, $arrSet['language']);
+            try
+            {
+                $objDatabase->prepare("INSERT INTO tl_search_index (pid, word, relevance, language) VALUES (?, ?, ?, ?)")
+                    ->execute($pid, $k, $v, $arrSet['language']);
+            } catch (\Exception $exception) {
+                $errors[] = 'pid: '.$pid.', word: '.$k.', relevance: '.$v.', language: '.$arrSet['language'];
+            }
+        }
+        if (!empty($errors)) {
+            System::log("Error while updating search index with following data-sets: (".implode("), (", $errors).')', __METHOD__, TL_ERROR);
         }
     }
 

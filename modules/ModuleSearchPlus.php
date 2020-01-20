@@ -12,7 +12,9 @@
 namespace HeimrichHannot\SearchPlus;
 
 
-class ModuleSearchPlus extends \ModuleSearch
+use Contao\ModuleSearch;
+
+class ModuleSearchPlus extends ModuleSearch
 {
 
 	/**

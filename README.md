@@ -4,6 +4,8 @@ Extend the contao core search, to achieve more features like pdf search.
 
 ## Features
 
+- pdf search
+- filter pages for search frontend module 
 - Support Access-Control-Allow-Origin within be_rebuild_index.html5
 
 ### Dependencies
