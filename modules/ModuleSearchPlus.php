@@ -106,7 +106,7 @@ class ModuleSearchPlus extends ModuleSearch
 			if (isset($GLOBALS['TL_HOOKS']['customizeSearch']) && is_array($GLOBALS['TL_HOOKS']['customizeSearch'])) {
 				foreach ($GLOBALS['TL_HOOKS']['customizeSearch'] as $callback) {
 					$this->import($callback[0]);
-					$this->{$callback[0]}->{$callback[1]}($arrPages, $strKeywords, $strQueryType, $blnFuzzy);
+					$this->{$callback[0]}->{$callback[1]}($arrPages, $strKeywords, $strQueryType, $blnFuzzy, $this);
 				}
 			}
 

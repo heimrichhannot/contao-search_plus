@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] -2020-03-16
+- fixed missing parameter in customizeSearch hook
+
 ## [1.1.2] -2020-01-20
 - fixed backend layout for rebuild the search index
 - catch an database exception when inserting to long words
