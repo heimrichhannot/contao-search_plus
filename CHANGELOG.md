@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.4] -2020-06-08
+- fixed warning in pdf indexer
+
 ## [1.1.3] -2020-03-16
 - fixed missing parameter in customizeSearch hook
 

@@ -154,7 +154,7 @@ class Search
         $arrSet['text'] = substr($strContent, 0, 2000);
 
         // Update an existing old entry
-        if ($objIndex->pid == $arrSet['pid']) {
+        if ($objIndex->count() > 0 && $objIndex->pid == $arrSet['pid']) {
             $objDatabase->prepare("UPDATE tl_search %s WHERE id=?")
                 ->set($arrSet)
                 ->execute($objIndex->id);
