@@ -1,5 +1,7 @@
 # Search Plus
 
+> **Notice:** This bundle is not activly maintained anymore! Please refere to out [Search Bundle](https://github.com/heimrichhannot/contao-search-bundle) for contao 4 and new features!
+
 Extend the contao core search, to achieve more features like pdf search.
 
 ## Features
