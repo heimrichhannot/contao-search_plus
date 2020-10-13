@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.5] - 2020-10-12
+- fixed issue with contao 4.9 indexing
+
 ## [1.1.4] -2020-06-08
 - fixed warning in pdf indexer
 

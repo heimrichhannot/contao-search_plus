@@ -19,7 +19,7 @@ class Hooks
 	{
 	    if (true === Config::get('search_enablePdfIndexing'))
         {
-            if (preg_match_all('/href="(?<links>[^\"<]+\.pdf)"/i', $strContent, $matches))
+            if (preg_match_all('/href="(?<links>[^\"<]+\.pdf[^"]*)"/i', $strContent, $matches))
             {
                 Search::indexFiles($matches['links'], $arrSet);
                 return;
