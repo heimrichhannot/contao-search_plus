@@ -23,3 +23,8 @@ $GLOBALS['TL_LANG']['tl_module']['references']['searchOrder']['default'] = 'Defa
 $GLOBALS['TL_LANG']['tl_module']['references']['searchOrder']['pagesFirst'] = 'Pages first';
 $GLOBALS['TL_LANG']['tl_module']['references']['searchOrder']['filesFirst'] = 'Files first';
 
+/**
+ * Legends
+ */
+$GLOBALS['TL_LANG']['tl_module']['page_filter_legend'] = 'Page filter';
+

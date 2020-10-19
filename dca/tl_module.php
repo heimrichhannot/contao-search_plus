@@ -20,7 +20,12 @@ $arrDca['palettes']['__selector__'][] = 'searchPDF';
  * Palettes
  */
 $arrDca['palettes']['search'] = str_replace('searchType', 'searchType,searchPDF', $arrDca['palettes']['search']);
-$arrDca['palettes']['search'] = str_replace('rootPage', 'rootPage,pageMode,filterPages,addPageDepth', $arrDca['palettes']['search']);
+
+if (version_compare(VERSION, "4.6") >= 0) {
+    $arrDca['palettes']['search'] = str_replace('pages', 'pages;{page_filter_legend},pageMode,filterPages,addPageDepth;', $arrDca['palettes']['search']);
+} else {
+    $arrDca['palettes']['search'] = str_replace('rootPage', 'rootPage,pageMode,filterPages,addPageDepth', $arrDca['palettes']['search']);
+}
 
 /**
  * Subpalettes

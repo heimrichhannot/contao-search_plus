@@ -28,3 +28,8 @@ $GLOBALS['TL_LANG']['tl_module']['references']['searchOrder']['default'] = 'Stan
 $GLOBALS['TL_LANG']['tl_module']['references']['searchOrder']['pagesFirst'] = 'Seiten zuerst anzeigen';
 $GLOBALS['TL_LANG']['tl_module']['references']['searchOrder']['filesFirst'] = 'Dateien zuerst anzeigen';
 
+/**
+ * Legends
+ */
+$GLOBALS['TL_LANG']['tl_module']['page_filter_legend'] = 'Seitenfilter';
+

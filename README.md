@@ -38,8 +38,12 @@ You can also add the package via commandline:
 
 ### Templates
 
-You need to add two templates: `mod_search_simple` and `mod_search_advanced`. In your `mod_search` template you need to add `<?php echo $this->form ?>` to output the correct search form template. 
+~~You need to add two templates: `mod_search_simple` and `mod_search_advanced`. In your `mod_search` template you need to add `<?php echo $this->form ?>` to output the correct search form template.~~ No needed anymore for contao 4.x from version 1.2. 
 
 ### Settings
 
 You can disable PDF search on the Contao setting page. If enabled, an option to set the maximum pdf size to parse, is given.
+
+## Credits
+
+The contao 4.x compatibility changes were sponsored by fanthomas communications.

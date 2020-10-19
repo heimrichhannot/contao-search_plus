@@ -12,6 +12,8 @@
 namespace HeimrichHannot\SearchPlus;
 
 
+use Contao\Controller;
+use Contao\FrontendTemplate;
 use Contao\ModuleSearch;
 
 class ModuleSearchPlus extends ModuleSearch
@@ -43,9 +45,33 @@ class ModuleSearchPlus extends ModuleSearch
 
 		$strKeywords = trim(\Input::get('keywords'));
 
-		/** @var \FrontendTemplate|object $objFormTemplate */
-		$objFormTemplate = new \FrontendTemplate((($this->searchType == 'advanced') ? 'mod_search_advanced' : 'mod_search_simple'));
+        $templateName = ($this->searchType == 'advanced') ? 'mod_search_advanced' : 'mod_search_simple';
+        if (version_compare(VERSION, "4.0") >= 0) {
+            try {
+                Controller::getTemplate($templateName);
+                /** @var \FrontendTemplate|object $objFormTemplate */
+                $objFormTemplate = new \FrontendTemplate($templateName);
+            } catch (\Exception $exception) {
+                $objFormTemplate = $this->Template;
+                $objFormTemplate->advanced = ($this->searchType == 'advanced');
+            }
+        } else {
+            /** @var \FrontendTemplate|object $objFormTemplate */
+            $objFormTemplate = new \FrontendTemplate($templateName);
+        }
 
+
+//        $templateName = ($this->searchType == 'advanced') ? 'mod_search_advanced' : 'mod_search_simple';
+//        if (version_compare(VERSION, "4.0") >= 0) {
+//            try {
+//                Controller::getTemplate($templateName);
+//            } catch (\Exception $exception) {
+//                $templateName = $this->strTemplate;
+//            }
+//        }
+
+//        /** @var \FrontendTemplate|object $objFormTemplate */
+//        $objFormTemplate = new \FrontendTemplate($templateName);
 		$objFormTemplate->uniqueId     = $this->id;
 		$objFormTemplate->queryType    = $strQueryType;
 		$objFormTemplate->keyword      = specialchars($strKeywords);
@@ -118,7 +144,7 @@ class ModuleSearchPlus extends ModuleSearch
 			}
 
 			$arrResult       = null;
-			$strChecksum     = md5($strKeywords . $strQueryType . $intRootId . $blnFuzzy . implode(',', $arrPages));
+			$strChecksum     = md5($strKeywords . $strQueryType . $intRootId . $blnFuzzy. $this->searchOrder . implode(',', $arrPages));
 			$query_starttime = microtime(true);
 			$strCacheFile    = 'system/cache/search/' . $strChecksum . '.json';
 
@@ -210,23 +236,47 @@ class ModuleSearchPlus extends ModuleSearch
 				
 				$objTemplate->relevance = sprintf(
 					$GLOBALS['TL_LANG']['MSC']['relevance'],
-					number_format($objResult->relevance / $objSearchResults->first()->relevance * 100, 2) . '%'
+					number_format($objResult->relevance / $arrResult[0]['relevance'] * 100, 2) . '%'
 				);
-				$objTemplate->filesize  = $objResult->filesize;
+
+                $objTemplate->filesize  = $objResult->filesize;
 				$objTemplate->matches   = $objResult->matches;
 
 				$arrContext = array();
 				$arrMatches = trimsplit(',', $objResult->matches);
 
+                $contextLength = $this->contextLength;
+                $totalLength = $this->totalLength;
+                if (version_compare(VERSION, "4.9") >= 0) {
+                    $contextLength = 48;
+                    $totalLength = 360;
+                    $lengths = deserialize($this->contextLength, true);
+                    if ($lengths[0] > 0)
+                    {
+                        $contextLength = $lengths[0];
+                    }
+
+                    if ($lengths[1] > 0)
+                    {
+                        $totalLength = $lengths[1];
+                    }
+                }
+
 				// Get the context
 				foreach ($arrMatches as $strWord) {
 					$arrChunks = array();
-					preg_match_all(
-						'/(^|\b.{0,' . $this->contextLength . '}\PL)' . str_replace('+', '\\+', $strWord) . '(\PL.{0,' . $this->contextLength
-						. '}\b|$)/ui',
-						$objResult->text,
-						$arrChunks
-					);
+
+					if (version_compare(VERSION, "4.6") >= 0)
+					{
+                        preg_match_all('/(^|\b.{0,' . $contextLength . '}(?:\PL|\p{Hiragana}|\p{Katakana}|\p{Han}|\p{Myanmar}|\p{Khmer}|\p{Lao}|\p{Thai}|\p{Tibetan}))' . preg_quote($strWord, '/') . '((?:\PL|\p{Hiragana}|\p{Katakana}|\p{Han}|\p{Myanmar}|\p{Khmer}|\p{Lao}|\p{Thai}|\p{Tibetan}).{0,' . $contextLength . '}\b|$)/ui', $objResult->text, $arrChunks);
+                    } else {
+                        preg_match_all(
+                            '/(^|\b.{0,' . $this->contextLength . '}\PL)' . str_replace('+', '\\+', $strWord) . '(\PL.{0,' . $this->contextLength
+                            . '}\b|$)/ui',
+                            $objResult->text,
+                            $arrChunks
+                        );
+                    }
 
 					foreach ($arrChunks[0] as $strContext) {
 						$arrContext[] = ' ' . $strContext . ' ';
@@ -235,7 +285,7 @@ class ModuleSearchPlus extends ModuleSearch
 
 				// Shorten the context and highlight all keywords
 				if (!empty($arrContext)) {
-					$objTemplate->context = trim(\StringUtil::substrHtml(implode('…', $arrContext), $this->totalLength));
+					$objTemplate->context = trim(\StringUtil::substrHtml(implode('…', $arrContext), $totalLength));
 					$objTemplate->context = preg_replace(
 						'/(\PL)(' . implode('|', $arrMatches) . ')(\PL)/ui',
 						'$1<span class="highlight">$2</span>$3',

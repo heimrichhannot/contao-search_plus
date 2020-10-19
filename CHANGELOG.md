@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2020-10-19
+- fixed module palette for contao >= 4.6
+- fixed templates names for contao 4.x (keeped bc compatiblity for adjusted templates)
+- fixed search result caching no respected search mode
+- fixed relevance calculation when not using default search mode
+- fixed missing text preview in search results for contao >= 4.9
+
 ## [1.1.5] - 2020-10-12
 - fixed issue with contao 4.9 indexing
 
